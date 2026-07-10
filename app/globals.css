@@ -1,0 +1,65 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f6f7f9;
+  --surface: #ffffff;
+  --foreground: #12161c;
+  --muted: #5b6472;
+  --border: #e2e5ea;
+
+  --accent: #2f5aff;
+  --accent-foreground: #ffffff;
+
+  --rising: #0f9d58;
+  --rising-soft: #e7f6ec;
+  --peaking: #b45309;
+  --peaking-soft: #fdf1de;
+  --declining: #d0342c;
+  --declining-soft: #fbe9e8;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0b0d11;
+    --surface: #14171c;
+    --foreground: #eef0f3;
+    --muted: #97a0ad;
+    --border: #262b33;
+
+    --accent: #5b82ff;
+    --accent-foreground: #0b0d11;
+
+    --rising: #34d399;
+    --rising-soft: #0f2a20;
+    --peaking: #f3b74e;
+    --peaking-soft: #2e2410;
+    --declining: #f2695f;
+    --declining-soft: #301513;
+  }
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-border: var(--border);
+
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+
+  --color-rising: var(--rising);
+  --color-rising-soft: var(--rising-soft);
+  --color-peaking: var(--peaking);
+  --color-peaking-soft: var(--peaking-soft);
+  --color-declining: var(--declining);
+  --color-declining-soft: var(--declining-soft);
+
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
