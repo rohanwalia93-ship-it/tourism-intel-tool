@@ -4,6 +4,7 @@ import { Suspense, use, useMemo, useState } from "react";
 import clsx from "clsx";
 import { RequireDestination } from "@/components/require-destination";
 import { SegmentCard } from "@/components/segment-card";
+import { SegmentDetailModal } from "@/components/segment-detail-modal";
 import { getTrendRadar } from "@/lib/data";
 import type { Destination, Segment, TrendDirection } from "@/lib/types";
 
@@ -23,6 +24,7 @@ function SegmentGrid({ segmentsPromise }: { segmentsPromise: Promise<Segment[]> 
   const segments = use(segmentsPromise);
   const [filter, setFilter] = useState<FilterOption>("all");
   const [sort, setSort] = useState<SortOption>("ranked");
+  const [selectedSegment, setSelectedSegment] = useState<Segment | null>(null);
 
   const visibleSegments = useMemo(() => {
     const filtered = filter === "all" ? segments : segments.filter((s) => s.trendDirection === filter);
@@ -81,9 +83,17 @@ function SegmentGrid({ segmentsPromise }: { segmentsPromise: Promise<Segment[]> 
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {visibleSegments.map((segment) => (
-            <SegmentCard key={segment.id} segment={segment} />
+            <SegmentCard
+              key={segment.id}
+              segment={segment}
+              onClick={() => setSelectedSegment(segment)}
+            />
           ))}
         </div>
+      )}
+
+      {selectedSegment && (
+        <SegmentDetailModal segment={selectedSegment} onClose={() => setSelectedSegment(null)} />
       )}
     </>
   );

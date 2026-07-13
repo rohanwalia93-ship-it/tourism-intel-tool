@@ -33,7 +33,7 @@ export interface Segment {
   trendDirection: TrendDirection;
   /** Year-over-year search interest growth, percent. */
   searchGrowthPct: number;
-  /** Relative booking-volume index over the last 8 periods, for sparklines. */
+  /** Relative booking-volume index over the last 12 weeks, for sparklines and the detail chart. */
   bookingVolumeTrend: number[];
   /** Social mention volume over the last 30 days (count). */
   socialMentionVolume: number;

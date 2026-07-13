@@ -69,7 +69,7 @@ function classifyTrend(growthPct: number): TrendDirection {
 }
 
 function buildSparkline(rng: () => number, direction: TrendDirection): number[] {
-  const points = 8;
+  const points = 12;
   const base = randRange(rng, 40, 60);
   const drift =
     direction === "rising" ? randRange(rng, 4, 9) : direction === "peaking" ? randRange(rng, 0, 2) : randRange(rng, -8, -3);
