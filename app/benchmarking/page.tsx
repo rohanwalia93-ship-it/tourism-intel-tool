@@ -31,7 +31,7 @@ function BenchmarkTable({
           <thead>
             <tr className="border-b border-border">
               <th className="px-4 py-3 text-left font-semibold text-muted">Metric</th>
-              <th className="min-w-[140px] bg-accent/5 px-4 py-3 text-left font-semibold">
+              <th className="min-w-[140px] bg-accent/10 px-4 py-3 text-left font-semibold">
                 {destination.name}
               </th>
               {competitors.map((c) => (
@@ -48,7 +48,7 @@ function BenchmarkTable({
                   <div className="font-medium">{row.definition.name}</div>
                   <div className="text-xs text-muted">{row.definition.description}</div>
                 </td>
-                <td className="bg-accent/5 px-4 py-3">
+                <td className="bg-accent/10 px-4 py-3">
                   <div className="flex items-center gap-2">
                     <span className="font-semibold tabular-nums">
                       {formatValue(row.clientValue, row.definition.unit)}
@@ -117,10 +117,6 @@ function BenchmarkingContent({
         <h1 className="mt-1 text-2xl font-bold tracking-tight">
           {destination.name} vs. {competitors.length > 0 ? "regional competitors" : "no competitors selected"}
         </h1>
-        <p className="mt-2 max-w-2xl text-sm text-muted">
-          Positioning across the metrics that matter most for destination strategy: growth,
-          segment strength, pricing power, sentiment, demand, and loyalty.
-        </p>
       </div>
 
       {competitors.length === 0 ? (

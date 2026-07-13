@@ -125,39 +125,35 @@ function OpportunityScoreContent({
 
   return (
     <div className="mx-auto max-w-5xl px-6 py-10">
-      <div className="mb-8">
-        <p className="text-sm font-semibold uppercase tracking-wide text-accent">
-          Opportunity Score
-        </p>
-        <h1 className="mt-1 text-2xl font-bold tracking-tight">
-          Score any niche for {destination.name}
-        </h1>
-        <p className="mt-2 max-w-2xl text-sm text-muted">
-          Enter a tourism niche to see a 0–100 opportunity score, what&apos;s driving it, and how
-          it compares against {competitors.length > 0 ? "your selected competitors" : "comparable destinations"}.
-        </p>
-      </div>
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wide text-accent">
+            Opportunity Score
+          </p>
+          <h1 className="mt-1 text-2xl font-bold tracking-tight">{destination.name}</h1>
+        </div>
 
-      <form onSubmit={submit} className="mb-8 flex flex-col gap-3 sm:flex-row">
-        <input
-          value={nicheInput}
-          onChange={(e) => setNicheInput(e.target.value)}
-          list="known-niches"
-          placeholder="e.g. yacht tourism, culinary tourism, dark sky tourism…"
-          className="flex-1 rounded-lg border border-border bg-surface px-4 py-3 text-sm outline-none ring-accent/30 placeholder:text-muted focus:ring-2"
-        />
-        <datalist id="known-niches">
-          {knownNiches.map((n) => (
-            <option key={n} value={n} />
-          ))}
-        </datalist>
-        <button
-          type="submit"
-          className="rounded-lg bg-accent px-5 py-3 text-sm font-semibold text-accent-foreground hover:opacity-90"
-        >
-          Score this niche
-        </button>
-      </form>
+        <form onSubmit={submit} className="flex items-center gap-2">
+          <input
+            value={nicheInput}
+            onChange={(e) => setNicheInput(e.target.value)}
+            list="known-niches"
+            placeholder="Score a different niche…"
+            className="w-56 rounded-md border border-border bg-surface px-3 py-2 text-sm outline-none ring-accent/30 placeholder:text-muted focus:ring-2 sm:w-72"
+          />
+          <datalist id="known-niches">
+            {knownNiches.map((n) => (
+              <option key={n} value={n} />
+            ))}
+          </datalist>
+          <button
+            type="submit"
+            className="rounded-md bg-accent px-3 py-2 text-sm font-semibold text-accent-foreground hover:opacity-90"
+          >
+            Score
+          </button>
+        </form>
+      </div>
 
       <Suspense fallback={<div className="py-24 text-center text-sm text-muted">Scoring…</div>}>
         <ScoreResult resultPromise={resultPromise} key={`${destination.id}::${activeNiche}`} />

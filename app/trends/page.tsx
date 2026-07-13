@@ -99,10 +99,7 @@ function TrendRadarContent({ destination }: { destination: Destination }) {
         <h1 className="mt-1 text-2xl font-bold tracking-tight">
           Tourism segments for {destination.name}
         </h1>
-        <p className="mt-2 max-w-2xl text-sm text-muted">
-          Ranked by momentum. Each segment blends search-interest growth, booking-volume trend,
-          and social conversation into a single read on where demand is heading.
-        </p>
+        <p className="mt-1 text-sm text-muted">Ranked by momentum, highest first.</p>
       </div>
 
       <Suspense fallback={<div className="py-24 text-center text-sm text-muted">Loading segments…</div>}>

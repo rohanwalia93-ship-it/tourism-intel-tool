@@ -1,46 +1,30 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f6f7f9;
-  --surface: #ffffff;
-  --foreground: #12161c;
-  --muted: #5b6472;
-  --border: #e2e5ea;
+  color-scheme: dark;
 
-  --accent: #2f5aff;
+  --background: #05070a;
+  --surface: #12151b;
+  --surface-raised: #1a1e26;
+  --foreground: #f5f7fa;
+  --muted: #a3adba;
+  --border: #2a2f3a;
+
+  --accent: #5b7dff;
   --accent-foreground: #ffffff;
 
-  --rising: #0f9d58;
-  --rising-soft: #e7f6ec;
-  --peaking: #b45309;
-  --peaking-soft: #fdf1de;
-  --declining: #d0342c;
-  --declining-soft: #fbe9e8;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0b0d11;
-    --surface: #14171c;
-    --foreground: #eef0f3;
-    --muted: #97a0ad;
-    --border: #262b33;
-
-    --accent: #5b82ff;
-    --accent-foreground: #0b0d11;
-
-    --rising: #34d399;
-    --rising-soft: #0f2a20;
-    --peaking: #f3b74e;
-    --peaking-soft: #2e2410;
-    --declining: #f2695f;
-    --declining-soft: #301513;
-  }
+  --rising: #3ddb98;
+  --rising-soft: #0f2a20;
+  --peaking: #f7bb47;
+  --peaking-soft: #332508;
+  --declining: #ff6f65;
+  --declining-soft: #3a1512;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-surface: var(--surface);
+  --color-surface-raised: var(--surface-raised);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-border: var(--border);
@@ -57,6 +41,10 @@
 
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+}
+
+html {
+  color-scheme: dark;
 }
 
 body {

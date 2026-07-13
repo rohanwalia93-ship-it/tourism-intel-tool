@@ -14,13 +14,13 @@ export function SegmentCard({ segment }: { segment: Segment }) {
 
       <div className="flex items-center justify-between gap-3">
         <div>
-          <div className="text-2xl font-bold tabular-nums">{growthLabel}</div>
+          <div className="text-3xl font-bold tabular-nums">{growthLabel}</div>
           <div className="text-xs text-muted">search growth YoY</div>
         </div>
         <Sparkline data={segment.bookingVolumeTrend} direction={segment.trendDirection} />
       </div>
 
-      <p className="text-sm leading-relaxed text-muted">{segment.whySummary}</p>
+      <p className="line-clamp-2 text-sm leading-relaxed text-muted">{segment.whySummary}</p>
 
       <div className="mt-auto border-t border-border pt-3 text-xs text-muted">
         {segment.socialMentionVolume.toLocaleString()} social mentions / 30d
