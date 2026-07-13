@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import clsx from "clsx";
 import { DESTINATIONS, searchDestinations, suggestCompetitors } from "@/lib/mock-data/destinations";
 import { useSelection } from "@/lib/selection-context";
+import { saveReport } from "@/lib/reports-store";
 import type { Destination } from "@/lib/types";
 
 function slugify(input: string): string {
@@ -90,6 +91,7 @@ export default function LandingPage() {
   function proceed() {
     if (!destination) return;
     setSelection(destination, competitors);
+    saveReport(destination, competitors);
     router.push("/trends");
   }
 

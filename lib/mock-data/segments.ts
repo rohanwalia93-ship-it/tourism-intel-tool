@@ -10,7 +10,7 @@ interface SegmentDefinition {
 // Fixed catalog of tourism segments tracked for every destination. Real
 // integrations (Google Trends categories, booking-platform taxonomies,
 // social-listening topics) would map onto these same segment keys.
-const SEGMENT_CATALOG: SegmentDefinition[] = [
+export const SEGMENT_CATALOG: SegmentDefinition[] = [
   {
     key: "heritage-culture",
     name: "Heritage & Culture",

@@ -9,6 +9,8 @@ const NAV_LINKS = [
   { href: "/trends", label: "Trend Radar" },
   { href: "/opportunity", label: "Opportunity Score" },
   { href: "/benchmarking", label: "Benchmarking" },
+  { href: "/seasonality", label: "Seasonality" },
+  { href: "/competitors", label: "Competitors" },
 ];
 
 export function NavBar() {
@@ -50,6 +52,16 @@ export function NavBar() {
         )}
 
         <div className="flex items-center gap-3 text-sm">
+          <Link
+            href="/reports"
+            className={clsx(
+              "font-medium",
+              pathname === "/reports" ? "text-accent" : "text-muted hover:text-foreground"
+            )}
+          >
+            Saved Reports
+          </Link>
+
           {hasSelection && destination ? (
             <>
               <span className="hidden text-muted sm:inline">Destination</span>

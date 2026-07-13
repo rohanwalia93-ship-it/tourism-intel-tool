@@ -27,10 +27,21 @@ add 2–4 comparable competitor destinations, then explore:
 - **Destination Benchmarking** (`/benchmarking`) — a metric-by-metric table
   comparing the client destination against its competitors, with an
   auto-generated takeaway sentence.
+- **Seasonality Calendar** (`/seasonality`) — a month-by-month heatmap of
+  demand per segment, with peak/quiet month summary stats, for timing
+  campaigns and launches.
+- **Competitor Deep-Dive** (`/competitors`) — pick one selected competitor and
+  see a focused head-to-head: top-momentum segments and a 1-vs-1 benchmark
+  table, instead of the aggregate comparison.
+- **Saved Reports** (`/reports`) — every destination you analyze is saved
+  automatically (to `localStorage`) so you can reopen a past analysis without
+  re-selecting a destination and competitors. Reachable from the nav bar even
+  before picking a destination.
 
 Destination + competitor selection is kept in a small client-side store
 (`lib/selection-context.tsx`, persisted to `localStorage`) so it carries over
-between pages without a backend.
+between pages without a backend. A separate store (`lib/reports-store.ts`)
+keeps the Saved Reports history the same way.
 
 ## Project structure
 
@@ -40,17 +51,22 @@ app/
   trends/page.tsx           Trend Radar dashboard
   opportunity/page.tsx      Opportunity Score tool
   benchmarking/page.tsx     Destination Benchmarking table
+  seasonality/page.tsx      Seasonality Calendar heatmap
+  competitors/page.tsx      Competitor Deep-Dive (1-vs-1)
+  reports/page.tsx          Saved Reports history
 components/                 Presentational UI components
 lib/
-  types.ts                  Shared domain types (Destination, Segment, NicheScore, BenchmarkMetric, ...)
+  types.ts                  Shared domain types (Destination, Segment, NicheScore, BenchmarkMetric, SeasonalitySeries, SavedReport, ...)
   data.ts                   Public data-layer API — UI code only imports from here
   selection-context.tsx     Client-side destination/competitor selection store
+  reports-store.ts          Client-side saved-reports history store
   mock-data/                Mock data generators (the part that gets replaced with real APIs)
     random.ts                Deterministic seeded PRNG so mock output is stable across renders
     destinations.ts          Curated destination catalog + region-based competitor suggestions
-    segments.ts               Trend Radar segment generator
+    segments.ts               Trend Radar segment generator (also the shared segment catalog)
     niche-scores.ts           Opportunity Score generator
     benchmarks.ts              Benchmark metric generator
+    seasonality.ts             Seasonality Calendar generator
 ```
 
 ## How the mock data layer works

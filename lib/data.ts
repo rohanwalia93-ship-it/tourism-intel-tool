@@ -18,6 +18,7 @@ import type {
   Destination,
   NicheScore,
   Segment,
+  SeasonalitySeries,
 } from "@/lib/types";
 import {
   DESTINATIONS,
@@ -31,6 +32,7 @@ import {
   BENCHMARK_METRIC_DEFINITIONS,
   getBenchmarkMetricsForDestination,
 } from "@/lib/mock-data/benchmarks";
+import { getSeasonalityForDestination } from "@/lib/mock-data/seasonality";
 
 function slugify(input: string): string {
   return input
@@ -88,6 +90,12 @@ export async function suggestCompetitors(
 
 export async function getTrendRadar(destination: Destination): Promise<Segment[]> {
   return getSegmentsForDestination(destination);
+}
+
+// ---- Seasonality Calendar -------------------------------------------------
+
+export async function getSeasonality(destination: Destination): Promise<SeasonalitySeries[]> {
+  return getSeasonalityForDestination(destination);
 }
 
 // ---- Opportunity Score ---------------------------------------------------

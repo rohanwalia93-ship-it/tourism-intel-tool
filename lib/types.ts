@@ -77,3 +77,18 @@ export interface BenchmarkMetric {
 }
 
 export type BenchmarkPosition = "leads" | "lags" | "matches";
+
+export interface SeasonalitySeries {
+  destinationId: string;
+  segmentKey: string;
+  segmentName: string;
+  /** 12 relative-demand values (0-100), January through December. */
+  months: number[];
+}
+
+export interface SavedReport {
+  id: string;
+  destination: Destination;
+  competitors: Destination[];
+  savedAt: number;
+}
