@@ -3,44 +3,42 @@
 :root {
   color-scheme: dark;
 
-  --background: #05070a;
-  --surface: #12151b;
-  --surface-raised: #1a1e26;
-  --foreground: #f5f7fa;
-  --muted: #a3adba;
-  --border: #2a2f3a;
+  /* Deep night-navigation palette. --signal-risk is lightened from the
+     brief's #E2596B to #E67080 to clear WCAG AA (4.5:1) against
+     --bg-panel; every other token clears AA with headroom to spare. */
+  --bg-primary: #0e1b2e;
+  --bg-panel: #16283f;
+  --bg-panel-raised: #1d3350;
+  --border: #2a3d57;
 
-  --accent: #5b7dff;
-  --accent-foreground: #ffffff;
+  --accent-brass: #c9a227;
+  --accent-brass-foreground: #0e1b2e;
 
-  --rising: #3ddb98;
-  --rising-soft: #0f2a20;
-  --peaking: #f7bb47;
-  --peaking-soft: #332508;
-  --declining: #ff6f65;
-  --declining-soft: #3a1512;
+  --signal-positive: #4fd1a5;
+  --signal-risk: #e67080;
+
+  --text-primary: #edeae2;
+  --text-muted: #9aa6b8;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-surface: var(--surface);
-  --color-surface-raised: var(--surface-raised);
-  --color-foreground: var(--foreground);
-  --color-muted: var(--muted);
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-panel: var(--bg-panel);
+  --color-bg-panel-raised: var(--bg-panel-raised);
   --color-border: var(--border);
 
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
+  --color-brass: var(--accent-brass);
+  --color-brass-foreground: var(--accent-brass-foreground);
 
-  --color-rising: var(--rising);
-  --color-rising-soft: var(--rising-soft);
-  --color-peaking: var(--peaking);
-  --color-peaking-soft: var(--peaking-soft);
-  --color-declining: var(--declining);
-  --color-declining-soft: var(--declining-soft);
+  --color-positive: var(--signal-positive);
+  --color-risk: var(--signal-risk);
 
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-text-primary: var(--text-primary);
+  --color-text-muted: var(--text-muted);
+
+  --font-display: var(--font-space-grotesk);
+  --font-sans: var(--font-ibm-plex-sans);
+  --font-mono: var(--font-ibm-plex-mono);
 }
 
 html {
@@ -48,6 +46,67 @@ html {
 }
 
 body {
-  background: var(--color-background);
-  color: var(--color-foreground);
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+/* Visible keyboard focus everywhere (Part B.5 quality floor). */
+:focus-visible {
+  outline: 2px solid var(--accent-brass);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* Radar Dial signature element: a single once-only sweep on mount, mirroring
+   the logo's pulse. Pure CSS so prefers-reduced-motion needs no JS branch. */
+@keyframes radar-sweep-spin {
+  from {
+    transform: rotate(0deg);
+    opacity: 0.85;
+  }
+  to {
+    transform: rotate(360deg);
+    opacity: 0;
+  }
+}
+.radar-sweep-overlay {
+  animation: radar-sweep-spin 1.6s ease-out 1 forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .radar-sweep-overlay {
+    animation: none;
+    opacity: 0;
+  }
+}
+
+/* Compass rotation (Home screen category selector). */
+.compass-ring {
+  transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .compass-ring {
+    transition: none;
+  }
+}
+
+/* Scenario Simulator needle/blip recalculation. */
+.dial-transition {
+  transition: cx 0.5s ease, cy 0.5s ease, x1 0.5s ease, y1 0.5s ease, x2 0.5s ease, y2 0.5s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dial-transition {
+    transition: none;
+  }
+}
+
+/* Print-optimized Insight Report export (window.print()). */
+@media print {
+  nav,
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #ffffff;
+    color: #111111;
+  }
 }

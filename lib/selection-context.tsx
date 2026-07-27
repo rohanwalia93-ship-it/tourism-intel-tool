@@ -1,38 +1,33 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import type { Destination } from "@/lib/types";
+import type { DestinationId } from "@/lib/types";
 
-// A tiny external store (not React Context) so destination + competitor
-// selection is shared across every route without prop drilling, and
-// persisted to localStorage. Using `useSyncExternalStore` instead of
-// `useEffect` + `useState` avoids the hydrate-from-localStorage effect
-// entirely — the store loads synchronously on the client and React handles
-// the server/client snapshot difference for us.
+// Small external store for the selected Destination (Dubai | Abu Dhabi) and
+// the currently focused event within the Events category, persisted to
+// localStorage so both survive navigation between the compass Home screen,
+// the category dashboard, the Scenario Simulator, and the Insight Report.
 
 interface SelectionState {
-  destination: Destination | null;
-  competitors: Destination[];
+  destination: DestinationId | null;
+  focusedEventId: string | null;
 }
 
 const STORAGE_KEY = "tmi:selection";
-const EMPTY_STATE: SelectionState = { destination: null, competitors: [] };
+const EMPTY_STATE: SelectionState = { destination: null, focusedEventId: null };
 
-function loadFromStorage(): SelectionState {
+function load(): SelectionState {
   if (typeof window === "undefined") return EMPTY_STATE;
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw) as SelectionState;
-      if (parsed.destination) return parsed;
-    }
+    if (raw) return { ...EMPTY_STATE, ...(JSON.parse(raw) as Partial<SelectionState>) };
   } catch {
     // ignore malformed storage
   }
   return EMPTY_STATE;
 }
 
-let state: SelectionState = typeof window !== "undefined" ? loadFromStorage() : EMPTY_STATE;
+let state: SelectionState = typeof window !== "undefined" ? load() : EMPTY_STATE;
 const listeners = new Set<() => void>();
 
 function emit() {
@@ -57,25 +52,22 @@ function persist() {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
 }
 
-function setSelectionStore(destination: Destination, competitors: Destination[]) {
-  state = { destination, competitors };
+export function setDestination(next: DestinationId) {
+  state = { destination: next, focusedEventId: null };
   persist();
   emit();
 }
 
-function clearSelectionStore() {
-  state = EMPTY_STATE;
+export function setFocusedEvent(eventId: string) {
+  state = { ...state, focusedEventId: eventId };
   persist();
   emit();
 }
 
-export function useSelection() {
-  const snapshot = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  return {
-    destination: snapshot.destination,
-    competitors: snapshot.competitors,
-    hasSelection: snapshot.destination !== null,
-    setSelection: setSelectionStore,
-    clearSelection: clearSelectionStore,
-  };
+export function useDestination(): DestinationId | null {
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot).destination;
+}
+
+export function useFocusedEventId(): string | null {
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot).focusedEventId;
 }

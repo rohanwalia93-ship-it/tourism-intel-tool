@@ -1,34 +1,19 @@
-import clsx from "clsx";
 import type { TrendDirection } from "@/lib/types";
 
-const STYLES: Record<TrendDirection, { label: string; className: string; dot: string }> = {
-  rising: {
-    label: "Rising",
-    className: "bg-rising-soft text-rising",
-    dot: "bg-rising",
-  },
-  peaking: {
-    label: "Peaking",
-    className: "bg-peaking-soft text-peaking",
-    dot: "bg-peaking",
-  },
-  declining: {
-    label: "Declining",
-    className: "bg-declining-soft text-declining",
-    dot: "bg-declining",
-  },
+const STYLES: Record<TrendDirection, { label: string; color: string }> = {
+  rising: { label: "Rising", color: "var(--signal-positive)" },
+  peaking: { label: "Peaking", color: "var(--accent-brass)" },
+  declining: { label: "Declining", color: "var(--signal-risk)" },
 };
 
 export function TrendBadge({ direction }: { direction: TrendDirection }) {
   const style = STYLES[direction];
   return (
     <span
-      className={clsx(
-        "inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold",
-        style.className
-      )}
+      className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 font-mono text-xs font-medium"
+      style={{ color: style.color, borderColor: style.color }}
     >
-      <span className={clsx("h-1.5 w-1.5 rounded-full", style.dot)} />
+      <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: style.color }} />
       {style.label}
     </span>
   );

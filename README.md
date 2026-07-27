@@ -1,12 +1,17 @@
-# Tourism Market Intelligence Tool
+# Tourism Market Intelligence — Dubai & Abu Dhabi
 
-A destination-agnostic market intelligence dashboard for tourism clients —
-DMOs, tour operators, and hospitality brands — to spot emerging trends in
-their destination and benchmark against comparable regional competitors.
+A self-serve market intelligence tool for tourism investment decisions in
+Dubai and Abu Dhabi. Pick a destination and a product category — Events,
+Attractions, Accommodation, or MICE — and every downstream module
+(Trend Radar, Opportunity Score, Risk Radar, Benchmarking, Regulatory Pulse,
+Scenario Simulator, Insight Report) reconfigures its metrics and scoring to
+match that category. Nothing generic is shown.
 
-Built with Next.js (App Router) + TypeScript + Tailwind CSS. Currently backed
-by a deterministic mock data layer; see [Swapping in real data](#swapping-in-real-data-sources)
-below for how to wire up live sources.
+**Build status:** Part C, steps 1–6 of the build brief. **Events** is built
+end-to-end. Attractions, Accommodation, and MICE have their metric schemas
+locked (`lib/types.ts`) but no data generator or dashboard yet — they show as
+"Coming soon" on the compass. The Capital Allocation view (phase 2) needs all
+four categories live first.
 
 ## Getting started
 
@@ -15,123 +20,160 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). Pick a destination on the
-landing page (any city — the app is not hardcoded to a fixed list), optionally
-add 2–4 comparable competitor destinations, then explore:
+Open [http://localhost:3000](http://localhost:3000). Select a destination on
+the compass, turn to **Events** (the only live category), and enter the
+dashboard.
 
-- **Trend Radar** (`/trends`) — ranked tourism segments with trend direction,
-  search-growth stats, sparklines, and a "why" explanation.
-- **Opportunity Score** (`/opportunity`) — type any niche (e.g. "yacht
-  tourism") to get a 0–100 opportunity score, a breakdown of what drives it,
-  and a comparison against competitor destinations.
-- **Destination Benchmarking** (`/benchmarking`) — a metric-by-metric table
-  comparing the client destination against its competitors, with an
-  auto-generated takeaway sentence.
-- **Seasonality Calendar** (`/seasonality`) — a month-by-month heatmap of
-  demand per segment, with peak/quiet month summary stats, for timing
-  campaigns and launches.
-- **Competitor Deep-Dive** (`/competitors`) — pick one selected competitor and
-  see a focused head-to-head: top-momentum segments and a 1-vs-1 benchmark
-  table, instead of the aggregate comparison.
-- **Saved Reports** (`/reports`) — every destination you analyze is saved
-  automatically (to `localStorage`) so you can reopen a past analysis without
-  re-selecting a destination and competitors. Reachable from the nav bar even
-  before picking a destination.
+## Screens
 
-Destination + competitor selection is kept in a small client-side store
-(`lib/selection-context.tsx`, persisted to `localStorage`) so it carries over
-between pages without a backend. A separate store (`lib/reports-store.ts`)
-keeps the Saved Reports history the same way.
+- **Home** (`/`) — the compass selector. A destination toggle (Dubai / Abu
+  Dhabi) plus a radial compass with the four category positions; a brass
+  needle rotates to the selection. Only Events is enterable right now.
+- **Events dashboard** (`/events`) — one scrolling screen: **Trend Radar**
+  (ranked list of mock Dubai/Abu Dhabi events by momentum), then the focused
+  event's **Opportunity Score + Risk Radar** via the Radar Dial, then
+  **Benchmarking** against comparable events, then **Regulatory Pulse** (a
+  feed filtered to Events + the selected destination). Click any row in the
+  Trend Radar list to focus that event — everything below updates.
+- **Scenario Simulator** (`/events/scenario`) — adjust ticket price, event
+  date, venue capacity, or toggle a competing-event announcement for the
+  focused event; Opportunity/Risk recalculate live on the same Radar Dial,
+  using the exact same scoring functions as the dashboard.
+- **Insight Report** (`/events/report`) — an auto-generated briefing for the
+  focused event: executive summary, key findings, Opportunity/Risk
+  breakdown, benchmark position, risks & caveats, a one-line recommendation,
+  and the standing disclaimer. `Export` triggers a print-optimized
+  `window.print()` (save as PDF from the browser's print dialog).
+- **Coming soon** (`/attractions`, `/accommodation`, `/mice`) — placeholder
+  screens for the categories not yet built.
 
 ## Project structure
 
 ```
 app/
-  page.tsx                 Landing / destination selector
-  trends/page.tsx           Trend Radar dashboard
-  opportunity/page.tsx      Opportunity Score tool
-  benchmarking/page.tsx     Destination Benchmarking table
-  seasonality/page.tsx      Seasonality Calendar heatmap
-  competitors/page.tsx      Competitor Deep-Dive (1-vs-1)
-  reports/page.tsx          Saved Reports history
-components/                 Presentational UI components
+  page.tsx                    Home / compass selector
+  events/page.tsx              Events category dashboard
+  events/scenario/page.tsx     Scenario Simulator
+  events/report/page.tsx       Insight Report
+  attractions/page.tsx         Coming soon
+  accommodation/page.tsx       Coming soon
+  mice/page.tsx                Coming soon
+components/
+  radar-dial.tsx               The signature Radar Dial element
+  compass-selector.tsx         Home screen destination + category compass
+  score-breakdown.tsx          Opportunity/Risk component bars
+  benchmark-table.tsx          Comparable-events benchmark table
+  regulatory-feed.tsx          Regulatory Pulse feed list
+  trend-badge.tsx               Rising/Peaking/Declining badge
+  require-destination.tsx       Guard shown when no destination is selected
+  coming-soon.tsx                Shared "not built yet" screen
 lib/
-  types.ts                  Shared domain types (Destination, Segment, NicheScore, BenchmarkMetric, SeasonalitySeries, SavedReport, ...)
-  data.ts                   Public data-layer API — UI code only imports from here
-  selection-context.tsx     Client-side destination/competitor selection store
-  reports-store.ts          Client-side saved-reports history store
-  mock-data/                Mock data generators (the part that gets replaced with real APIs)
-    random.ts                Deterministic seeded PRNG so mock output is stable across renders
-    destinations.ts          Curated destination catalog + region-based competitor suggestions
-    segments.ts               Trend Radar segment generator (also the shared segment catalog)
-    niche-scores.ts           Opportunity Score generator
-    benchmarks.ts              Benchmark metric generator
-    seasonality.ts             Seasonality Calendar generator
+  types.ts                     Schema lock: all four category metric matrices
+                                (Part A.3), Opportunity/Risk/Benchmark/
+                                Regulatory/Scenario/Report shapes
+  events-engine.ts             Pure computeOpportunity/computeRisk/
+                                applyScenario/buildEventBenchmark functions —
+                                the Scenario Simulator calls the same
+                                functions the static dashboard does
+  insight-report.ts            Insight Report template generator (see below)
+  selection-context.tsx        Destination + focused-event store (localStorage)
+  use-focused-event.ts         Shared "ranked events + focused event" hook
+  mock-data/
+    random.ts                   Deterministic seeded PRNG
+    events.ts                    Mock Events catalog (16 events, 8/destination)
+    regulatory.ts                 Mock Regulatory Pulse feed
 ```
+
+## Design system
+
+Tokens live in `app/globals.css` as CSS custom properties (`--bg-primary`,
+`--bg-panel`, `--accent-brass`, `--signal-positive`, `--signal-risk`,
+`--text-primary`, `--text-muted`), consumed via Tailwind v4's `@theme inline`
+so every component uses semantic classes (`bg-bg-panel`, `text-brass`, …)
+rather than hardcoded colors. Dark-only, deep navy + brass, no light mode.
+
+`--signal-risk` is `#E67080`, not the brief's literal `#E2596B` — it's
+lightened just enough to clear WCAG AA (4.5:1) against `--bg-panel`; every
+other token clears AA with headroom. Re-run the contrast check in
+`app/globals.css`'s comment if you change any of these.
+
+Fonts: Space Grotesk (`font-display`, headings + the Radar Dial readout),
+IBM Plex Sans (`font-sans`, body), IBM Plex Mono (`font-mono`, all numeric
+data), loaded via `next/font/google` in `app/layout.tsx`.
+
+**The Radar Dial** (`components/radar-dial.tsx`) is the signature element:
+Opportunity and Risk are plotted as one blip on an x/y field (Opportunity =
+horizontal, Risk = vertical) inside concentric brass-ticked rings — not
+collapsed into a single number. It's reused on the dashboard, the Scenario
+Simulator, and the Insight Report. Motion (the once-only sweep on mount, the
+compass needle rotation, and the dial's live recalculation) is pure CSS and
+respects `prefers-reduced-motion` throughout (see the keyframe blocks in
+`app/globals.css`).
 
 ## How the mock data layer works
 
-Every mock value is generated **deterministically** from a seed string (e.g.
-`${destinationId}::segment::${segmentKey}`) via a small seeded PRNG in
-`lib/mock-data/random.ts`. That means:
+Every mock event metric is generated **deterministically** from a seed
+string (`events::${eventId}`) via the seeded PRNG in `lib/mock-data/random.ts`
+— the same event always produces the same numbers, so nothing reshuffles
+between renders or on scenario reset.
 
-- The same destination + niche + segment always produces the same numbers —
-  no flicker between server and client renders, and no reshuffling on
-  navigation.
-- Data works for **any** destination string a client types, not just the
-  curated catalog in `lib/mock-data/destinations.ts`. Free-typed destinations
-  become a "custom" `Destination` (see `resolveDestination` in `lib/data.ts`)
-  and flow through the exact same generators.
+`lib/events-engine.ts` is the important seam: `computeOpportunity` and
+`computeRisk` are pure functions of an `EventRecord`, implementing the exact
+weights from the build brief (Part A.3 §1):
 
-The typed shapes in `lib/types.ts` are the contract:
+- **Opportunity** — Demand Velocity 40%, Calendar White Space 25%, Capacity
+  Headroom 20%, Sentiment 15%.
+- **Risk** — Oversupply/Clash Risk 35%, Cannibalization Risk 25%, Regulatory
+  Risk 20%, Sentiment Volatility 20% (risk sub-weights are this project's own
+  design — the brief specifies the category but not exact risk weights).
 
-- `Segment` — a tourism segment (Heritage & Culture, Desert & Eco, etc.) for
-  one destination, with trend direction, search growth, a booking-volume
-  sparkline series, social mention volume, and a short narrative.
-- `NicheScore` — a 0–100 opportunity score for a (destination, niche) pair,
-  with a `demandGrowth` / `competitiveSaturation` / `sentiment` breakdown and
-  a "why now" narrative.
-- `BenchmarkMetric` — a single metric value (visitor growth, sentiment,
-  pricing index, etc.) for one destination, combined across destinations into
-  a `BenchmarkRow` for the comparison table.
+`applyScenario(event, adjustments)` returns an adjusted `EventRecord`; the
+Scenario Simulator runs that through the *same* `computeOpportunity` /
+`computeRisk` the dashboard uses, per the brief's "no separate model, just an
+interactive version of the same math."
 
-## Swapping in real data sources
+## Insight Report generation
 
-All UI components import from `lib/data.ts`, never from `lib/mock-data/`
-directly — that's the seam. Every function in `lib/data.ts` is already
-`async`, so replacing an implementation with a real fetch doesn't change any
-call sites. For example:
+The brief calls for an LLM call here ("existing Claude integration ... one
+prompt template per category"). `lib/insight-report.ts` is a deterministic,
+data-driven template instead, so the report can never contradict the numbers
+next to it. This is the swap point: replace `buildInsightReport` with a call
+to the Claude API (Messages API, one system prompt per category), passing the
+same event/opportunity/risk/benchmark/regulatory payload as context, and keep
+the function's signature so `app/events/report/page.tsx` doesn't need to
+change.
 
-```ts
-// lib/data.ts — before (mock)
-export async function getTrendRadar(destination: Destination): Promise<Segment[]> {
-  return getSegmentsForDestination(destination);
-}
+## Extending to the other categories
 
-// after (real Google Trends integration)
-export async function getTrendRadar(destination: Destination): Promise<Segment[]> {
-  const raw = await googleTrends.interestByCategory(destination.name, SEGMENT_CATEGORIES);
-  return mapGoogleTrendsToSegments(raw);
-}
-```
+`lib/types.ts` already locks the metric matrix and Opportunity weights for
+Attractions, Accommodation, and MICE (Part A.3 §2–4). To bring one online,
+follow the Events pattern:
 
-Suggested mapping of real sources to swap points:
+1. `lib/mock-data/<category>.ts` — a generator like `events.ts`.
+2. `lib/<category>-engine.ts` — `computeOpportunity`/`computeRisk`/
+   `applyScenario`/benchmark builder, like `events-engine.ts`.
+3. `app/<category>/page.tsx`, `.../scenario/page.tsx`, `.../report/page.tsx`
+   — copy the Events screens and swap the data-layer calls.
+4. Flip `available: true` for that category in `CATEGORIES` (`lib/types.ts`).
 
-| Data layer function | Real source candidates |
-| --- | --- |
-| `getTrendRadar` | Google Trends categories, booking-platform search volume |
-| `getOpportunityScore(Comparison)` | Search APIs (demand growth), booking/OTA supply data (competitive saturation), social listening / review APIs (sentiment) |
-| `getBenchmarkComparison` | Tourism board statistics (visitor growth, repeat visitor rate), OTA pricing data (price positioning), review platforms (sentiment) |
-| `suggestCompetitors` | A proper geo/market-similarity model instead of the current region-based heuristic |
+Once all four are live, build the Capital Allocation view (phase 2): four
+Radar Dials side by side, ranked, each category's Opportunity/Risk/Net and a
+one-line rationale.
 
-Since `lib/types.ts` doesn't change, no component in `app/` or `components/`
-needs to change either — only the implementations inside `lib/data.ts` and
-`lib/mock-data/`.
+## Known gaps / next steps
+
+- **Insight Report export** currently uses the browser's native
+  `window.print()` (`Export` button); real PDF/DOCX generation (e.g. a
+  headless-render or `docx` library) would be a cleaner next step.
+- **Insight Report copy** is template-generated, not LLM-generated — see
+  above.
+- Attractions, Accommodation, MICE, and the Capital Allocation view are not
+  built yet (see "Extending to the other categories").
 
 ## Deployment
 
-This is a standard Next.js App Router project with no custom server, so it
-deploys to [Vercel](https://vercel.com/new) with zero configuration:
+Standard Next.js App Router project, no custom server — deploys to
+[Vercel](https://vercel.com/new) with zero configuration:
 
 ```bash
 npm run build
@@ -141,4 +183,5 @@ npm run build
 
 - [Next.js](https://nextjs.org) (App Router) + TypeScript
 - [Tailwind CSS v4](https://tailwindcss.com)
-- [Recharts](https://recharts.org) for sparklines and the opportunity radar chart
+- Custom SVG for the Radar Dial and compass (no charting library — full
+  control over the signature elements)
